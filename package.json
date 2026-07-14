@@ -1,0 +1,39 @@
+{
+  "name": "win11-tasks-integration",
+  "displayName": "Windows Tasks Integration",
+  "scriptOutputName": "win11TasksIntegration",
+  "version": "0.1.0",
+  "description": "Adds generic Windows OS-task effects to Firebot (active window info, and more to come), for use with any other Firebot script or effect list",
+  "main": "",
+  "scripts": {
+    "build": "webpack",
+    "build:dev": "npm run build && npm run copy",
+    "copy": "ts-node ./scripts/copy-build.ts",
+    "test": "jest"
+  },
+  "author": "d1r0l",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@crowbartools/firebot-custom-scripts-types": "^5.63.2",
+    "@oceanity/firebot-helpers": "1.1.1",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^18.18.2",
+    "@types/webpack": "^5.28.5",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "jest": "^29.7.0",
+    "terser-webpack-plugin": "^5.3.10",
+    "ts-jest": "^29.1.1",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "volta": {
+    "node": "18.18.2",
+    "npm": "10.2.4"
+  }
+}
