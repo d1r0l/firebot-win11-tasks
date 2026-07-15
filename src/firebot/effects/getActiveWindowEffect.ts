@@ -1,4 +1,4 @@
-import { getActiveWindowTitleAsync } from "@/utils/os";
+import { getActiveWindowInfoAsync, toObsWindowSelector } from "@/utils/os";
 import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
 import { logger } from "@oceanity/firebot-helpers/firebot";
 import { getErrorMessage } from "@oceanity/firebot-helpers/string";
@@ -10,7 +10,7 @@ export const GetActiveWindowEffect: Firebot.EffectType<EffectParams> = {
     id: "get-active-window",
     name: "Windows: Get Active Window Title",
     description:
-      "Gets the title of the currently focused (foreground) window. Chain this with any other script's effects by feeding its output in as their input.",
+      "Gets info about the currently focused (foreground) window, including an OBS window_capture-ready selector string. Chain this with any other script's effects by feeding its output in as their input.",
     icon: "fas fa-window-maximize",
     categories: ["integrations"],
     outputs: [
@@ -18,6 +18,23 @@ export const GetActiveWindowEffect: Firebot.EffectType<EffectParams> = {
         label: "Active Window Title",
         description: "The title of the currently focused window.",
         defaultName: "activeWindowTitle",
+      },
+      {
+        label: "Active Window Class",
+        description: "The window class name of the currently focused window.",
+        defaultName: "activeWindowClass",
+      },
+      {
+        label: "Active Window Executable",
+        description:
+          "The executable file name (e.g. notepad.exe) owning the currently focused window.",
+        defaultName: "activeWindowExecutable",
+      },
+      {
+        label: "Active Window OBS Selector",
+        description:
+          'The "title:class:executable" string OBS\'s window_capture source (raw websocket mode: 1, "capture a specific window") expects for its window input setting.',
+        defaultName: "activeWindowObsSelector",
       },
       {
         label: "Error Message",
@@ -29,7 +46,7 @@ export const GetActiveWindowEffect: Firebot.EffectType<EffectParams> = {
 
   optionsTemplate: `
       <eos-container header="Windows: Get Active Window Title" pad-top="true">
-        <p>Gets the title of the currently focused window. No configuration needed.</p>
+        <p>Gets info about the currently focused window. No configuration needed.</p>
       </eos-container>
     `,
 
@@ -42,14 +59,17 @@ export const GetActiveWindowEffect: Firebot.EffectType<EffectParams> = {
 
   onTriggerEvent: async () => {
     try {
-      const activeWindowTitle = await getActiveWindowTitleAsync();
+      const info = await getActiveWindowInfoAsync();
 
-      logger.info(`Active window title: ${activeWindowTitle}`);
+      logger.info(`Active window: ${JSON.stringify(info)}`);
 
       return {
         success: true,
         outputs: {
-          activeWindowTitle,
+          activeWindowTitle: info.title,
+          activeWindowClass: info.className,
+          activeWindowExecutable: info.executableName,
+          activeWindowObsSelector: toObsWindowSelector(info),
           error: "",
         },
       };
@@ -58,6 +78,9 @@ export const GetActiveWindowEffect: Firebot.EffectType<EffectParams> = {
         success: false,
         outputs: {
           activeWindowTitle: "",
+          activeWindowClass: "",
+          activeWindowExecutable: "",
+          activeWindowObsSelector: "",
           error: getErrorMessage(error),
         },
       };
